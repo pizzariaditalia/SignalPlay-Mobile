@@ -1,15 +1,16 @@
 package com.signalplay.mobile
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.graphics.Color
 import android.os.Bundle
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AppCompatActivity
 
-class MainActivity : Activity() {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var webView: WebView
 
@@ -17,7 +18,10 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // Criamos o visual direto no código, eliminando a dependência de arquivos XML!
+        // Esconde a barra superior
+        supportActionBar?.hide()
+
+        // Cria o WebView em tela cheia direto pelo código
         webView = WebView(this)
         webView.setBackgroundColor(Color.parseColor("#111114"))
         setContentView(webView)
@@ -32,16 +36,18 @@ class MainActivity : Activity() {
         webView.webViewClient = WebViewClient()
         webView.webChromeClient = WebChromeClient()
 
-        // Puxando o seu site!
+        // Puxando o seu site Hospedado!
         webView.loadUrl("http://signalplay.pro")
-    }
 
-    // Sistema raiz para o botão "Voltar" do celular
-    override fun onBackPressed() {
-        if (webView.canGoBack()) {
-            webView.goBack()
-        } else {
-            super.onBackPressed()
-        }
+        // Botão de voltar inteligente (Navega no site em vez de fechar o app)
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (webView.canGoBack()) {
+                    webView.goBack()
+                } else {
+                    finish()
+                }
+            }
+        })
     }
 }
