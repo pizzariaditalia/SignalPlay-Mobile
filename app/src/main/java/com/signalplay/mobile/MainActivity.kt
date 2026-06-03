@@ -1,53 +1,49 @@
-package com.signalplay.mobile
+package com.signalplay.mobile;
 
-import android.annotation.SuppressLint
-import android.graphics.Color
-import android.os.Bundle
-import android.webkit.WebChromeClient
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
-import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AppCompatActivity
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
-class MainActivity : AppCompatActivity() {
+public class MainActivity extends Activity {
 
-    private lateinit var webView: WebView
+    private WebView webView;
 
     @SuppressLint("SetJavaScriptEnabled")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        
-        // Esconde a barra superior
-        supportActionBar?.hide()
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-        // Cria o WebView em tela cheia direto pelo código
-        webView = WebView(this)
-        webView.setBackgroundColor(Color.parseColor("#111114"))
-        setContentView(webView)
+        // Cria o WebView em tela cheia direto pelo código (Sem XML!)
+        webView = new WebView(this);
+        webView.setBackgroundColor(Color.parseColor("#111114"));
+        setContentView(webView);
 
-        val settings: WebSettings = webView.settings
-        settings.javaScriptEnabled = true
-        settings.domStorageEnabled = true 
-        settings.databaseEnabled = true
-        settings.mediaPlaybackRequiresUserGesture = false 
-        settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+        WebSettings settings = webView.getSettings();
+        settings.setJavaScriptEnabled(true);
+        settings.setDomStorageEnabled(true);
+        settings.setDatabaseEnabled(true);
+        settings.setMediaPlaybackRequiresUserGesture(false);
+        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
 
-        webView.webViewClient = WebViewClient()
-        webView.webChromeClient = WebChromeClient()
+        webView.setWebViewClient(new WebViewClient());
+        webView.setWebChromeClient(new WebChromeClient());
 
         // Puxando o seu site Hospedado!
-        webView.loadUrl("http://signalplay.pro")
+        webView.loadUrl("http://signalplay.pro");
+    }
 
-        // Botão de voltar inteligente (Navega no site em vez de fechar o app)
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (webView.canGoBack()) {
-                    webView.goBack()
-                } else {
-                    finish()
-                }
-            }
-        })
+    // Sistema raiz para o botão "Voltar" do celular
+    @Override
+    public void onBackPressed() {
+        if (webView.canGoBack()) {
+            webView.goBack();
+        } else {
+            super.onBackPressed();
+        }
     }
 }
