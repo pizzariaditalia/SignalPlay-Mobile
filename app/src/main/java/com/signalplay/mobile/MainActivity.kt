@@ -1,25 +1,26 @@
 package com.signalplay.mobile
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.graphics.Color
 import android.os.Bundle
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AppCompatActivity
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : Activity() {
 
     private lateinit var webView: WebView
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        supportActionBar?.hide()
-        setContentView(R.layout.activity_main)
-
-        webView = findViewById(R.id.webView)
+        
+        // Criamos o visual direto no código, eliminando a dependência de arquivos XML!
+        webView = WebView(this)
+        webView.setBackgroundColor(Color.parseColor("#111114"))
+        setContentView(webView)
 
         val settings: WebSettings = webView.settings
         settings.javaScriptEnabled = true
@@ -31,17 +32,16 @@ class MainActivity : AppCompatActivity() {
         webView.webViewClient = WebViewClient()
         webView.webChromeClient = WebChromeClient()
 
-        // Puxando o seu site hospedado na Hostinger
+        // Puxando o seu site!
         webView.loadUrl("http://signalplay.pro")
+    }
 
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (webView.canGoBack()) {
-                    webView.goBack()
-                } else {
-                    finish()
-                }
-            }
-        })
+    // Sistema raiz para o botão "Voltar" do celular
+    override fun onBackPressed() {
+        if (webView.canGoBack()) {
+            webView.goBack()
+        } else {
+            super.onBackPressed()
+        }
     }
 }
