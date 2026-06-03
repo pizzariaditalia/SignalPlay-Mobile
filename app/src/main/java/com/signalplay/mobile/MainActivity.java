@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,14 @@ public class MainActivity extends Activity {
         // 1. Trava o aplicativo em pé no catálogo e ativa a Tela Cheia Absoluta
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        
+        // MÁGICA DO NOTCH: Permite que o vídeo ocupe o espaço da câmera/gota d'água (Android 9+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
+            layoutParams.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+            getWindow().setAttributes(layoutParams);
+        }
+
         ocultarBarrasDoSistema();
 
         webView = new WebView(this);
@@ -67,7 +76,7 @@ public class MainActivity extends Activity {
                 customView = view;
                 customViewCallback = callback;
                 
-                // MÁGICA: Joga o vídeo na camada superior da tela (Resolve a Tela Preta)
+                // Joga o vídeo na camada superior da tela (Resolve a Tela Preta)
                 FrameLayout decorView = (FrameLayout) getWindow().getDecorView();
                 decorView.addView(customView, new FrameLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
